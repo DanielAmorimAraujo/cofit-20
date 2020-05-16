@@ -28,13 +28,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    FitnessOptions fitnessOptions = FitnessOptions.builder()
-            .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-            .build();
-    GoogleSignInAccount account = GoogleSignIn.getAccountForExtension(this, fitnessOptions);
     private static final String TAG = "MyActivity";
     private static int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
+    FitnessOptions fitnessOptions;
+    GoogleSignInAccount account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        fitnessOptions = FitnessOptions.builder()
+                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                .build();
+        account = GoogleSignIn.getAccountForExtension(this, fitnessOptions);
 
         if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
             GoogleSignIn.requestPermissions(
@@ -82,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .build();
-
-        GoogleSignInAccount account = GoogleSignIn
-                .getAccountForExtension(this, fitnessOptions);
 
         Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
