@@ -1,37 +1,48 @@
 package com.example.ruhacks;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessOptions;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.request.DataUpdateRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
+    private DateFormat dateFormat = DateFormat.getDateInstance();
     private static int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
-    FitnessOptions fitnessOptions;
-    GoogleSignInAccount account;
+
+    FitnessOptions fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .build();
+
+    FitnessAPI fa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,60 +58,23 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        fitnessOptions = FitnessOptions.builder()
-                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .build();
-        account = GoogleSignIn.getAccountForExtension(this, fitnessOptions);
-
-        if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
-            GoogleSignIn.requestPermissions(
-                    this, // your activity
-                    GOOGLE_FIT_PERMISSIONS_REQUEST_CODE, // e.g. 1
-                    account,
-                    fitnessOptions);
-        } else {
-            accessGoogleFit();
-        }
+        fa = new FitnessAPI(this);
+        fa.fitSignIn();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
-                accessGoogleFit();
-            }
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            fa.updateAndReadData();
+        } else {
+            oAuthErrorMsg(requestCode, resultCode);
         }
     }
 
-    private void accessGoogleFit() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .bucketByTime(1, TimeUnit.DAYS)
-                .build();
-
-        Fitness.getHistoryClient(this, account)
-                .readData(readRequest)
-                .addOnSuccessListener(new OnSuccessListener<DataReadResponse>() {
-                    @Override
-                    public void onSuccess(DataReadResponse response) {
-                        // Use response data here
-
-                        Log.d(TAG, "OnSuccess()");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "OnFailure()", e);
-                    }
-                });
+    private void oAuthErrorMsg(int requestCode, int resultCode) {
+        String message = "There was an error signing into Google Fit";
+        Log.e(TAG, message);
     }
 }
