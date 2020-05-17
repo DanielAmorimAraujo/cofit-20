@@ -44,9 +44,9 @@ public class DashboardFragment extends Fragment implements GridAdapter.EventList
         final GridView gridView = root.findViewById(R.id.gridview);
 
         // Rewards from DashboardViewModel
-        dashboardViewModel.getRewards().observe(this, rewards -> {
+        ((MainActivity)getActivity()).getRewards().observe(this, rewards -> {
             GridAdapter adapter = new GridAdapter(getActivity(),
-                    rewards, this);
+                    rewards, this, container);
             gridView.setAdapter(adapter);
         });
 

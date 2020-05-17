@@ -7,14 +7,20 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.ruhacks.ui.dashboard.DashboardViewModel;
 import com.example.ruhacks.ui.home.HomeFragment;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataType;
@@ -27,12 +33,15 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
     private DateFormat dateFormat = DateFormat.getDateInstance();
     private static int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
+
+    private static MutableLiveData<ArrayList<Reward>> rewards;
 
     FitnessOptions fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
@@ -55,6 +64,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        rewards = new MutableLiveData<>();
+        rewards.setValue(new ArrayList<Reward>() {
+            {
+                add(new Reward("image1", R.drawable.image1, false));
+                add(new Reward("image2", R.drawable.image2, false));
+                add(new Reward("image3", R.drawable.image3, false));
+                add(new Reward("image4", R.drawable.image4, false));
+                add(new Reward("image5", R.drawable.image5, false));
+            }
+        });
+
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -183,5 +204,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void deductPoints(int points) {
         totalPoints -= points;
+    }
+
+    public LiveData<ArrayList<Reward>> getRewards() {
+        return rewards;
     }
 }

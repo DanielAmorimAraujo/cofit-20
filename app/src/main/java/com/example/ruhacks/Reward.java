@@ -1,4 +1,7 @@
-package com.example.ruhacks.ui.dashboard;
+package com.example.ruhacks;
+
+import android.content.Context;
+import android.view.ViewGroup;
 
 public class Reward {
     String value;
