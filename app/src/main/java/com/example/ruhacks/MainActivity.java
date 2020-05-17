@@ -183,8 +183,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void deductPoints(int points) {
         totalPoints -= points;
-        HomeFragment fragment = (HomeFragment) getSupportFragmentManager().
-                findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getPrimaryNavigationFragment();
-        fragment.updateBalance(Integer.toString(totalPoints));
     }
 }

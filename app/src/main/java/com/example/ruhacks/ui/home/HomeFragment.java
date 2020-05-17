@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
         tvYourMissions = getView().findViewById(R.id.tvYourMissions);
 
         tvCurrentBalanceValue = getView().findViewById(R.id.tvCurrentBalanceValue);
-        // tvCurrentBalanceValue.setText(Integer.toString(points));
+        tvCurrentBalanceValue.setText(Integer.toString(((MainActivity)getActivity()).getPoints()));
         ListView lvMissions = getView().findViewById(R.id.lvMissions);
 
         // Missions from HomeViewModel
