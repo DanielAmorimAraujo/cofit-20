@@ -19,7 +19,7 @@ public class DashboardFragment extends Fragment {
 
     private DashboardViewModel dashboardViewModel;
 
-    String [] values = {"test", "alpha", "beta", "gamma", "test"};
+    String [] values = {"image1", "image2", "image3", "image4", "image5"};
     int[] images = {
             R.drawable.image1,
             R.drawable.image2,
@@ -37,7 +37,7 @@ public class DashboardFragment extends Fragment {
 
         GridAdapter gridAdapter = new GridAdapter( getActivity(), values, images);
         gridView.setAdapter(gridAdapter);
-        
+
         return root;
     }
 }
