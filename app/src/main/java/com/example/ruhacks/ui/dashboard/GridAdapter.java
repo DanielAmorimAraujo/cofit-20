@@ -28,23 +28,35 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.EventListener;
 
 public class GridAdapter extends BaseAdapter {
     Context context;
-    private final String[] values;
-    private final int[] images;
+    // private final String[] values;
+    // private final int[] images;
+    private ArrayList<Reward> rewards;
     View view;
     LayoutInflater layoutInflater;
 
-    public GridAdapter(Context context, String[] values, int[] images) {
+    EventListener listener;
+
+    public interface EventListener {
+        int getPoints();
+        void deductPoints(int deducted);
+    }
+
+    public GridAdapter(Context context, ArrayList<Reward> rewards, EventListener listener) {
         this.context = context;
-        this.values = values;
-        this.images = images;
+        // this.values = values;
+        // this.images = images;
+        this.rewards = rewards;
+        this.listener = listener;
     }
 
     @Override
     public int getCount() {
-        return values.length;
+        return rewards.size();
     }
 
     @Override
@@ -65,23 +77,26 @@ public class GridAdapter extends BaseAdapter {
             view = new View(context);
             view = layoutInflater.inflate(R.layout.single_item, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-            imageView.setImageResource(images[position]);
+            imageView.setImageResource(rewards.get(position).getImage());
 
             Drawable myDrawable = imageView.getDrawable();
             BitmapDrawable bitmap = (BitmapDrawable) myDrawable;
 
             imageView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    if (rewards.get(position).getUnlocked()) {
+                        Resources resources = context.getResources();
+                        Uri uriToImage = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(rewards.get(position).getImage()) + '/' + resources.getResourceTypeName(rewards.get(position).getImage()) + '/' + resources.getResourceEntryName(rewards.get(position).getImage()));
 
-                    Resources resources = context.getResources();
-                    Uri uriToImage = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(images[position]) + '/' + resources.getResourceTypeName(images[position]) + '/' + resources.getResourceEntryName(images[position]) );
-
-                    Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-                    shareIntent.setType("image/png");
-                    context.startActivity(Intent.createChooser(shareIntent, "Yo"));
-
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+                        shareIntent.setType("image/png");
+                        context.startActivity(Intent.createChooser(shareIntent, "uwu"));
+                    } else if (listener.getPoints() >= 100) {
+                        rewards.get(position).unlock();
+                        listener.deductPoints(100);
+                    }
                 }
             });
         }
