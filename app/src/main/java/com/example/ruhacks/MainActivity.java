@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void syncSteps(View view) {
-        totalPoints += fa.getTotalSteps();
+        totalPoints += fa.getTotalSteps() / 100;
         updatePoints();
     }
 
