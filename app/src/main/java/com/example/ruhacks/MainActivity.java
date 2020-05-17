@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: This is not ideal at all but I'm not sure what better way to go about this
     String currentMission = "";
-    int totalPoints = 100;
+    int totalPoints = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,5 +183,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void deductPoints(int points) {
         totalPoints -= points;
+        HomeFragment fragment = (HomeFragment) getSupportFragmentManager().
+                findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getPrimaryNavigationFragment();
+        fragment.updateBalance(Integer.toString(totalPoints));
     }
 }
