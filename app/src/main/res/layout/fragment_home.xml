@@ -7,16 +7,74 @@
     tools:context=".ui.home.HomeFragment">
 
     <TextView
-        android:id="@+id/text_home"
-        android:layout_width="match_parent"
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:layout_marginLeft="54dp"
+        android:layout_marginTop="144dp"
+        android:layout_marginRight="298dp"
+        android:fontFamily="casual"
+        android:text="Welcome back!"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.093"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvCurrentBalance"/>
+
+    <TextView
+        android:id="@+id/tvCurrentBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="44dp"
+        android:layout_marginTop="48dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Current Balance:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvWelcome"
+        app:layout_constraintBottom_toTopOf="@id/tvYourMissions"
+        app:layout_constraintEnd_toStartOf="@+id/tvCurrentBalanceValue"/>
+
+    <TextView
+        android:id="@+id/tvCurrentBalanceValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="44dp"
+        android:layout_marginRight="138dp"
+        android:fontFamily="sans-serif-light"
+        android:text="0 points"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvYourMissions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentBalance"
+        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
+
+    <TextView
+        android:id="@+id/tvYourMissions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        android:layout_marginRight="254dp"
+        android:layout_marginBottom="19dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Your Missions:"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/lvMissions"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentBalance"
+        app:layout_constraintStart_toStartOf="@+id/tvCurrentBalance" />
+
+    <ListView
+        android:id="@+id/lvMissions"
+        android:layout_width="344dp"
+        android:layout_height="421dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="46dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvYourMissions" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

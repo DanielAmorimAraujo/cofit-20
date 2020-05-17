@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "995685193121",
+    "firebase_url": "https://weighty-wonder-277403.firebaseio.com",
+    "project_id": "weighty-wonder-277403",
+    "storage_bucket": "weighty-wonder-277403.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995685193121:android:3b4e0297ebc44078d667e0",
+        "android_client_info": {
+          "package_name": "com.example.ruhacks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995685193121-p4f6cqnbjq1le1das3ljtj3hicbimehh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS0r9MIyZHoQvtqQG1_2pGnYbvCuM6fDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995685193121-p4f6cqnbjq1le1das3ljtj3hicbimehh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -12,6 +13,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -19,6 +22,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        // This fixes a bug I was getting when I was building
+        packagingOptions {
+            exclude 'META-INF/DEPENDENCIES'
+            exclude 'META-INF/INDEX.LIST'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
 }
@@ -38,4 +50,17 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.gms:play-services-fitness:18.0.0'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
+
+    // For Google Cloud's Vision API
+    // implementation 'com.google.api-client:google-api-client-android:1.30.9'
+    // implementation 'com.google.cloud:google-cloud-vision:1.99.3'
+    // implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    // This is to fix some weird error saying I have too many methods
+    implementation 'com.android.support:multidex:1.0.3'
+
+    // For Firebase
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:20.0.1'
 }
