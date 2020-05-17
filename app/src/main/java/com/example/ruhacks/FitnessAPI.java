@@ -30,6 +30,7 @@ public class FitnessAPI {
     private DateFormat dateFormat = DateFormat.getDateInstance();
     private static int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
     private Activity context;
+    private int totalSteps;
 
     FitnessOptions fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
@@ -44,10 +45,14 @@ public class FitnessAPI {
 
     public void fitSignIn() {
         if (oAuthPermissionsApproved()) {
-            updateAndReadData();
+            readHistoryData();
         } else {
             GoogleSignIn.requestPermissions(context, GOOGLE_FIT_PERMISSIONS_REQUEST_CODE, getGoogleAccount(), fitnessOptions);
         }
+    }
+
+    public int getTotalSteps() {
+        return totalSteps;
     }
 
     private void oAuthErrorMsg(int requestCode, int resultCode) {
@@ -63,7 +68,7 @@ public class FitnessAPI {
         return GoogleSignIn.getAccountForExtension(context, fitnessOptions);
     }
 
-    private Task<DataReadResponse> readHistoryData() {
+    public Task<DataReadResponse> readHistoryData() {
         DataReadRequest readRequest = queryFitnessData();
 
         // Invoke the History API to fetch the data with the query
@@ -125,107 +130,8 @@ public class FitnessAPI {
             Log.i(TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field it : dp.getDataType().getFields()) {
                 Log.i(TAG, "\tField: " + it.getName() + " Value: " + dp.getValue(it));
+                totalSteps += Integer.parseInt(dp.getValue(it).toString()) ;
             }
         }
     }
-
-    public void updateAndReadData() {
-        updateData().continueWithTask(e -> readHistoryData());
-    }
-
-    private Task<Void> updateData() {
-        // Create a new dataset and update request.
-        DataSet dataSet = updateFitnessData();
-        long startTime = dataSet.getDataPoints().get(0).getStartTime(TimeUnit.MILLISECONDS);
-        long endTime = dataSet.getDataPoints().get(0).getEndTime(TimeUnit.MILLISECONDS);
-        // [START update_data_request]
-        Log.i(TAG, "Updating the dataset in the History API.");
-
-        DataUpdateRequest request = new DataUpdateRequest.Builder()
-                .setDataSet(dataSet)
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
-
-        // Invoke the History API to update data.
-        return Fitness.getHistoryClient(context, getGoogleAccount())
-                .updateData(request)
-                .addOnSuccessListener(e -> Log.i(TAG, "Data update was successful."))
-                .addOnFailureListener(e -> Log.e(TAG, "There was a problem updating the dataset.", e));
-    }
-
-    private DataSet updateFitnessData() {
-        Log.i(TAG, "Creating a new data update request.");
-
-        // [START build_update_data_request]
-        // Set a start and end time for the data that fits within the time range
-        // of the original insertion.
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        // Create a data source
-        DataSource dataSource = new DataSource.Builder()
-                .setAppPackageName(context)
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setStreamName(TAG + " - step count")
-                .setType(DataSource.TYPE_RAW)
-                .build();
-
-        // Create a data set
-        int stepCountDelta = 1000;
-        // For each data point, specify a start time, end time, and the data value -- in this case,
-        // the number of new steps.
-        return DataSet.builder(dataSource)
-                .add(DataPoint.builder(dataSource)
-                        .setField(Field.FIELD_STEPS, stepCountDelta)
-                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .build()
-                ).build();
-        // [END build_update_data_request]
-    }
-
-    /*
-    private void accessGoogleFit() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .bucketByTime(1, TimeUnit.DAYS)
-                .build();
-
-        Fitness.getHistoryClient(this, account)
-                .readData(readRequest)
-                .addOnSuccessListener(dataReadResponse -> {
-                    // printData(dataReadResponse);
-
-                }).addOnFailureListener(e -> {
-            Log.e(TAG, "There was a problem reading the data.", e);
-        });
-
-        const result = Fitness.getHistoryClient(this, account)
-                .readData(readRequest)
-                .addOnSuccessListener(new OnSuccessListener<DataReadResponse>() {
-                    @Override
-                    public void onSuccess(DataReadResponse response) {
-                        // Use response data here
-
-                        Log.d(TAG, "OnSuccess()");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "OnFailure()", e);
-                    }
-                });
-
-    }
-    */
 }

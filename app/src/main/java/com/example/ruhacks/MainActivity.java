@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,12 +74,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
-                fa.updateAndReadData();
+                fa.readHistoryData();
             } else if (requestCode == CAMERA_REQUEST_CODE) {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 requestMLKitImageLabeling(bitmap);
             }
         }
+        updatePoints();
     }
 
     private void oAuthErrorMsg(int requestCode, int resultCode) {
@@ -144,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
                             if (currentMission.contains(label.getText())) {
                                 returnPoints();
                             }
+                            if (currentMission.contains("Smoothie")) {
+                                returnPoints();
+                                break;
+                            }
                         }
                     }
                 })
@@ -155,8 +161,17 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    public void syncSteps(View view) {
+        totalPoints += fa.getTotalSteps();
+        updatePoints();
+    }
+
     public void returnPoints() {
         totalPoints += 100;
+        updatePoints();
+    }
+
+    public void updatePoints() {
         HomeFragment fragment = (HomeFragment) getSupportFragmentManager().
                 findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getPrimaryNavigationFragment();
         fragment.updateBalance(Integer.toString(totalPoints));
