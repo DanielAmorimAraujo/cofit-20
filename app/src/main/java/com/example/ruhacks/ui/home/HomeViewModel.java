@@ -25,4 +25,5 @@ public class HomeViewModel extends ViewModel {
     public LiveData<ArrayList<String>> getMissions() {
         return missions;
     }
+
 }
