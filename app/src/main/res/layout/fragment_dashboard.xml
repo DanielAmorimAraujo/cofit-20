@@ -4,4 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashboardFragment"/>
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <GridView
+        android:id="@+id/gridview"
+        android:numColumns="auto_fit"
+        android:gravity="center"
+        android:columnWidth="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></GridView>
+</androidx.constraintlayout.widget.ConstraintLayout>

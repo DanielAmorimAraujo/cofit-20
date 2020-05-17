@@ -3,6 +3,7 @@ package com.example.ruhacks;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
